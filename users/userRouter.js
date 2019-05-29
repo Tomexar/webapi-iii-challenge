@@ -1,7 +1,7 @@
 const express = require('express');
 
 const Users = require('./userDb')
-
+const Posts = require('../posts/postDb')
 const router = express.Router();
 
 
@@ -17,8 +17,15 @@ router.post('/', async (req, res) => {
         }
 });
 
-router.post('/:id/posts', (req, res) => {
-
+router.post('/:id/posts', async (req, res) => {
+    const newpost = {...req.body,user_id: req.params.id };
+    try{
+        const post = await Posts.insert(newpost);
+        res.status(210).json(post); 
+    }catch (error){
+        console.log(error);
+        res.status(500).json({ message: 'error getting messages'})
+    }
 });
 
 router.get('/', async (req, res) => {
