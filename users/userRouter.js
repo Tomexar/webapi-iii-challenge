@@ -7,9 +7,9 @@ const router = express.Router();
 
 
 
-router.post('/', async (req, res) => {
+router.post('/', validateUserId, validatePosts, validateUser, (req, res) => {
     try{
-        const newuser = await Users.insert(req.body)
+        const newuser =  Users.insert(req.body)
             res.status(201).json(newuser)
         }catch (error){
             console.log(error);
@@ -78,9 +78,9 @@ router.delete('/:id',async (req, res) => {
 
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
     try{
-        const edit = await Users.update(req.params.id, req.body);
+        const edit = Users.update(req.params.id, req.body);
         if (edit) {
             res.status(200).json(edit);
         }else {
@@ -105,9 +105,11 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
     const { user } = req.body;
-    const { name } = req.body;
+    const { name } = req.body.name;
     if (!user) {
         res.status(400).json({ message: 'missing user data' })
+    }if(!name) {
+        res.status(400).json({ message: 'missing required name field'})
     } else {
         next()
     }
@@ -116,10 +118,12 @@ function validateUser(req, res, next) {
 
 function validatePosts(req, res, next) {
     const { post } = req.body;
-
+    const { text } = req.text;
     if (!post) {
         res.status(400).json({ message: 'missing post data' })
-    } else {
+    } if (!text){
+        res.status(400).json({ message: 'messsage: missing text field'})
+    }else {
         next()
     }
 }

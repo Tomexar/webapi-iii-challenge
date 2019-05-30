@@ -1,6 +1,8 @@
 // code away!
 const server = require('./server.js');
 
-server.listen(4000, () =>{
-    console.log('running on 4k')
+const port = process.env.PORT || 4000;
+
+server.listen(port , () =>{
+    console.log(`running on ${port} `)
 })
